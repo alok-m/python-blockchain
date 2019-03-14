@@ -2,6 +2,7 @@
 skeleton for PoA Blockchain
 
 # packages required
+Server-side |
 --- |
 flask |
 urllib |
