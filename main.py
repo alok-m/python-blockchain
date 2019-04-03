@@ -17,6 +17,15 @@ def base():
         'chain': blockchain.blocs
     })
 
+@app.route('/mine')
+def mine():
+    updated = blockchain.mine(miner = request.remote_addr)
+    if(updated==0): message = 'Block Mined'
+    elif(updated==1): message = 'Forge trigger not reached'
+    elif(updated==-1): message = 'No Auth to mine blocks'
+    return flask.jsonify({
+        'message': message
+    })
 
 @app.route('/register/authority', methods=['POST'])
 def set_auth():
@@ -64,7 +73,7 @@ def new_transaction():
     payload = request.get_json(force=True)
 
     blockchain.new_transaction(
-        sender=address,
+        sender=request.remote_addr,
         content=payload
     )
 

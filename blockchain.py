@@ -10,7 +10,7 @@ FORGE_TRIGGER = 1
 
 class Blockchain:
     def __init__(self):
-        self.authority = None
+        self.authority = []
         self.blocs = []
         self.peers = set()
         self.mempool = []
@@ -23,29 +23,35 @@ class Blockchain:
             'previous_hash': prev_hash or self.previous_block['current_hash'],
             'current_hash': '',
             'timestamp': int(time()),
-            'transactions': self.mempool[:]
+            'transactions': self.mempool[:FORGE_TRIGGER]
         }
-
         bloc['current_hash'] = curr_hash or self.hash(bloc)
-
         self.blocs.append(bloc)
 
     def new_transaction(self, sender: str, content: dict):
-        if self.authority is not None:
-            requests.post(
-                f'http://{self.authority}/transaction/create',
-                json=content
-            )
-            return
+        if(sender in self.peers):
+            self.mempool.append({
+                'sender': sender,
+                'content': content
+            })
 
-        self.mempool.append({
-            'sender': sender,
-            'content': content
-        })
-
-        if len(self.mempool) == FORGE_TRIGGER:
-            self.forge(prev_hash=None, curr_hash=None)
-            self.mempool.clear()
+    def mine(self, miner: str) -> int:
+        mempool_size = len(self.mempool)
+        print(mempool_size)
+        if(miner in self.authority):
+            if mempool_size < FORGE_TRIGGER:
+                return 1
+            elif mempool_size == FORGE_TRIGGER:
+                self.forge(prev_hash=None, curr_hash=None)
+                self.mempool = self.mempool[FORGE_TRIGGER:]
+                return 0
+            elif(mempool_size > FORGE_TRIGGER):
+                while(len(self.mempool) > FORGE_TRIGGER):
+                    self.forge(prev_hash=None, curr_hash=None)
+                    self.mempool = self.mempool[FORGE_TRIGGER:]
+                return 0
+            return 1
+        return -1
 
     def register(self, address: str):
         parsed_url = urlparse(address)
@@ -53,7 +59,6 @@ class Blockchain:
 
     def sync(self) -> bool:
         changed = False
-
         for peer in self.peers:
             r = requests.get(f'http://{peer}/')
 
@@ -77,4 +82,4 @@ class Blockchain:
         return sha256(to_hash.encode()).hexdigest()
 
     def set_authority(self, address: str):
-        self.authority = address
+        self.authority.append(address)
