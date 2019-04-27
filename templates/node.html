@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+        crossorigin="anonymous">
+    <script src="main.js"></script>
+</head>
+<body>
+    <div class="jumbotron text-center" style="background-color:maroon; color:white;">
+        <h1>Decentralised Identity Management</h1>
+        <p>A fresh look at Aadhar</p>
+    </div>
+    <div class="row">
+        <div style="float: none; margin: 0 auto;">
+            <form action="/transaction" method="post">
+                <div class="row form-group">
+                    <input type="text" placeholder="Full Name" name="full_name" class="form-control">
+                </div>
+                <div class="row form-group">
+                    <input type="text" placeholder="Age" name="age" class="form-control">
+                </div>
+                <input type="submit" class="btn" style="background:maroon; color:white;" value="Create Transaction" />
+            </form>
+        </div>
+    </div>
+    <br>
+    <div class="container">
+        {% for node in context['chain'] %}
+            <div class="row">
+                <div class="card" style="float: none; margin: 0 auto; border-width: 5px; border-color: maroon;">
+                    <div class="card-body">
+                        <center>
+                            <p><b>Block Number</b> : {{context['chain'].index(node)}}</p>
+                            <hr>
+                            <p><b>Previous Hash</b> : {{node['previous_hash']}}</p>
+                            <hr>
+                            <p><b>Current Hash</b> : {{node['current_hash']}}</p>
+                            <hr>
+                            <p><b>Transactions</b> :
+                                
+                                {% for t in node['transactions'] %}
+                                    <div>
+                                    Name : {{t['content']['full_name']}},
+                                    Age : {{t['content']['age']}}
+                                    </div>
+                                {% endfor %}
+                                
+                            </p>
+                        </center>
+                    </div>
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+</html>

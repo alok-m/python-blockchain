@@ -38,21 +38,18 @@ class Blockchain:
     def mine(self, miner: str) -> int:
         mempool_size = len(self.mempool)
         print(mempool_size)
-        if(miner in self.authority):
-            if mempool_size < FORGE_TRIGGER:
-                return 1
-            elif mempool_size == FORGE_TRIGGER:
+        if mempool_size < FORGE_TRIGGER:
+            return 1
+        elif mempool_size == FORGE_TRIGGER:
+            self.forge(prev_hash=None, curr_hash=None)
+            self.mempool = self.mempool[FORGE_TRIGGER:]
+            return 0
+        elif(mempool_size > FORGE_TRIGGER):
+            while(len(self.mempool) >= FORGE_TRIGGER):
                 self.forge(prev_hash=None, curr_hash=None)
                 self.mempool = self.mempool[FORGE_TRIGGER:]
-                return 0
-            elif(mempool_size > FORGE_TRIGGER):
-                while(len(self.mempool) > FORGE_TRIGGER):
-                    self.forge(prev_hash=None, curr_hash=None)
-                    self.mempool = self.mempool[FORGE_TRIGGER:]
-                return 0
-            return 1
-        return -1
-
+            return 0
+        
     def register(self, address: str):
         parsed_url = urlparse(address)
         self.peers.add(parsed_url.path)
