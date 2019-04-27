@@ -46,6 +46,7 @@ def base():
         if(role == 'node'):
             template = 'node.html' #can create transactions and see all nodes
         else:
+            context.update({'mempool': blockchain.mempool})
             template = 'auth.html'  #can call mine function and see all nodes
         return render_template(template, context=context)
 

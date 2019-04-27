@@ -19,7 +19,9 @@
     <div class="container">
         <div class="row">
             <div style="float: none; margin: 0 auto;">
-                <input type="button" class="btn" style="background:maroon; color:white;" id="mine" value="Mine" />
+                <form action="/mine">
+                    <input type="submit" class="btn" style="background:maroon; color:white;" id="mine" value="Mine" />
+                </form>
             </div>
         </div>
         <br>
@@ -29,6 +31,18 @@
             </div>
         </div>
         <br>
+        {% if context['mempool'] %}
+        <div class="row">
+                <div class="card" style="float: none; margin: 0 auto; border-width: 5px; border-color: maroon;">
+                    <div class="card-body">
+                        <center>
+                            <p><b>Transactions : </b> {{context['mempool']}}</p>
+                        </center>
+                    </div>
+                </div>
+            </div>
+        <br>
+        {% endif %}
         {% for node in context['chain'] %}
             <div class="row">
                 <div class="card" style="float: none; margin: 0 auto; border-width: 5px; border-color: maroon;">
@@ -61,12 +75,5 @@
         crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
-    <script>
-        $("#mine").on('click',function(){
-            $.get('/mine',function(){
-                alert('mined');
-            });
-        });
-    </script>
 </body>
 </html>
